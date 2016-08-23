@@ -6,7 +6,12 @@ window.rsk = (function () {
                 renderTo: 'graph2',
                 type: 'column',
                 zoomType: 'x',
-                animation: false
+                animation: false,
+                events: {
+                    load: function(){
+                        this.myTooltip = new Highcharts.Tooltip(this, this.options.tooltip);
+                    }
+                }
             },
             legend: {
                 align: 'left',
@@ -24,7 +29,10 @@ window.rsk = (function () {
             },
             subtitle: {},
             xAxis: {
-                type: 'datetime'
+                type: 'datetime',
+                crosshair: {
+                    width: 1
+                }
             },
             yAxis: [{
                 type: 'linear',
@@ -38,17 +46,15 @@ window.rsk = (function () {
                     text: 'Millions'
                 },
                 min: 0
-            }, {
-                min: 0,
-                type: 'linear',
-                title: {
-                    text: 'Approval rate'
-                },
-                opposite: true,
-                gridLineColor: '#ffffff'
-            }],
+            }
+            ],
             tooltip: {
+                //enabled: false
                 formatter: function () {
+                    for (var i = 0; i < this.series.data.length; i++) {
+                        this.series.data[i].setState('hover');
+                    }
+
                     var range_start_date = new Date(this.x);
                     //var range_start_date = new Date(this.x * 1000);
                     var range_end_date = new Date(range_start_date);
@@ -60,14 +66,18 @@ window.rsk = (function () {
             },
             plotOptions: {
                 column: {
-                    pointRange: 604800000,
                     stacking: 'normal'
                 },
                 areaspline: {
                     stacking: 'normal',
-                    shadow: true,
+                    shadow: false,
                     marker: {
-                        enabled: false
+                        enabled: false,
+                        states: {
+                            hover: {
+                                enabled: false
+                            }
+                        }
                     }
                 }
             },
